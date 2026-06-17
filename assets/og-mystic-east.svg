@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Mystic East Open Graph Image</title>
+  <desc id="desc">A dark star field with a gold Mystic East seal.</desc>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="44%" r="58%">
+      <stop offset="0%" stop-color="#c9a96e" stop-opacity="0.26"/>
+      <stop offset="52%" stop-color="#7aa083" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#090611" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ead7a4"/>
+      <stop offset="48%" stop-color="#c9a96e"/>
+      <stop offset="100%" stop-color="#b35c42"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#090611"/>
+  <rect width="1200" height="630" fill="url(#halo)"/>
+  <g opacity="0.42" fill="#f5f0e8">
+    <circle cx="106" cy="92" r="2"/>
+    <circle cx="198" cy="182" r="1.5"/>
+    <circle cx="327" cy="112" r="1.5"/>
+    <circle cx="482" cy="74" r="2"/>
+    <circle cx="612" cy="158" r="1.5"/>
+    <circle cx="759" cy="98" r="2"/>
+    <circle cx="911" cy="166" r="1.5"/>
+    <circle cx="1047" cy="88" r="2"/>
+    <circle cx="1116" cy="244" r="1.5"/>
+    <circle cx="72" cy="368" r="1.5"/>
+    <circle cx="232" cy="492" r="2"/>
+    <circle cx="990" cy="452" r="2"/>
+    <circle cx="1110" cy="548" r="1.5"/>
+  </g>
+  <circle cx="600" cy="278" r="104" fill="none" stroke="url(#gold)" stroke-width="2"/>
+  <circle cx="600" cy="278" r="78" fill="rgba(201,169,110,0.09)" stroke="#c9a96e" stroke-opacity="0.5"/>
+  <text x="600" y="318" text-anchor="middle" font-size="104" fill="#ead7a4" font-family="serif">東</text>
+  <text x="600" y="450" text-anchor="middle" font-size="58" fill="#f5f0e8" font-family="serif" letter-spacing="2">Mystic East</text>
+  <text x="600" y="505" text-anchor="middle" font-size="26" fill="#ead7a4" font-family="serif">Your BaZi, Written in the Stars</text>
+</svg>

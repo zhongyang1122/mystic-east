@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Calculate your BaZi Four Pillars chart locally in your browser.">
+  <link rel="canonical" href="https://mystic-east.example/calculator.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Mystic East">
+  <meta property="og:title" content="Free BaZi Calculator | Mystic East">
+  <meta property="og:description" content="Calculate your Four Pillars chart locally, then discover your dominant BaZi archetype.">
+  <meta property="og:url" content="https://mystic-east.example/calculator.html">
+  <meta property="og:image" content="https://mystic-east.example/assets/og-mystic-east.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free BaZi Calculator | Mystic East">
+  <meta name="twitter:description" content="Reveal your BaZi chart and dominant archetype in your browser.">
+  <meta name="twitter:image" content="https://mystic-east.example/assets/og-mystic-east.svg">
+  <title>Your BaZi Calculator | Mystic East</title>
+  <!-- Plausible Analytics placeholder: replace data-domain before launch, then uncomment.
+  <script defer data-domain="mystic-east.example" src="https://plausible.io/js/script.js"></script>
+  -->
+  <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mystic East BaZi Calculator",
+      "url": "https://mystic-east.example/calculator.html",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="Mystic East home">
+        <span class="brand-mark">東</span>
+        <span>Mystic East</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="calculator.html" aria-current="page">Your BaZi</a>
+        <a href="what-is-bazi.html">What is BaZi</a>
+        <a href="insights/">Insights</a>
+        <a href="readings.html">Readings</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero compact">
+      <div class="star-field" aria-hidden="true"></div>
+      <div class="page-shell">
+        <span class="eyebrow">Local browser calculation</span>
+        <h1 class="page-title">Your BaZi Chart</h1>
+        <p class="page-intro">
+          Enter your solar birth date and birth hour. The calculator builds your Four Pillars
+          without a backend, account, or data storage.
+        </p>
+      </div>
+    </section>
+
+    <section class="section tight">
+      <div class="page-shell split-layout">
+        <aside class="panel" aria-label="Birth information form">
+          <h2>Birth Details</h2>
+          <p>
+            BaZi works with the year, month, day, and two-hour branch of birth.
+            If your exact minute is unknown, choose the closest traditional hour range.
+          </p>
+
+          <form id="birthForm">
+            <div class="field">
+              <label for="birthName">Name <span aria-hidden="true">(optional)</span></label>
+              <input id="birthName" name="birthName" type="text" autocomplete="name" placeholder="Luna">
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="birthDate">Birth Date</label>
+                <input id="birthDate" name="birthDate" type="date" min="1900-01-31" max="2030-12-31" required>
+              </div>
+
+              <div class="field">
+                <label for="birthHour">Birth Hour</label>
+                <select id="birthHour" name="birthHour" required></select>
+              </div>
+            </div>
+
+            <div class="year-tools" aria-label="Year adjustment shortcuts">
+              <button id="yearBack" type="button">Previous Year</button>
+              <button id="yearFwd" type="button">Next Year</button>
+            </div>
+
+            <button class="btn" type="submit">Calculate My Chart</button>
+            <p id="formError" class="form-error" role="alert" aria-live="polite"></p>
+          </form>
+        </aside>
+
+        <section class="result-stack" aria-live="polite">
+          <div id="emptyState" class="empty-state">
+            <div>
+              <strong>Your chart appears here</strong>
+              <p>
+                The Four Pillars, Five Elements balance, Ten Archetypes, and classic combinations
+                will unfold after calculation.
+              </p>
+            </div>
+          </div>
+
+          <div id="results" class="result-stack" hidden>
+            <section class="result-block">
+              <p class="result-kicker">Four Pillars</p>
+              <h2 id="resultTitle">Your Cosmic Blueprint</h2>
+              <p id="lunarLine" class="lunar-line"></p>
+              <div id="pillars" class="pillar-grid"></div>
+            </section>
+
+            <section class="result-block">
+              <h2>Detailed Chart</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pillar</th>
+                      <th>Heavenly Stem</th>
+                      <th>Earthly Branch</th>
+                      <th>Hidden Stems</th>
+                      <th>Ten Archetypes</th>
+                      <th>Elements</th>
+                      <th>Nayin</th>
+                      <th>Life Stage</th>
+                    </tr>
+                  </thead>
+                  <tbody id="detailRows"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="result-block">
+              <h2>Five Elements</h2>
+              <p>
+                This quick distribution counts visible Heavenly Stems and the Hidden Stems inside
+                each Earthly Branch, following the original tool's method.
+              </p>
+              <div id="elementBars" class="bars"></div>
+            </section>
+
+            <section class="result-block">
+              <h2>Personality</h2>
+              <p>
+                Ten Archetypes describe how your Day Master relates to the surrounding stems.
+                They are symbolic mirrors, not fixed labels.
+              </p>
+              <div id="personality" class="archetype-list"></div>
+            </section>
+
+            <section class="result-block">
+              <h2>Career Direction</h2>
+              <p id="career"></p>
+            </section>
+
+            <section class="result-block">
+              <h2>Classic Combinations</h2>
+              <div id="comboTags" class="tag-list"></div>
+            </section>
+
+            <section class="result-block">
+              <h2>60 Jiazi Reference</h2>
+              <p>
+                A compact reference table for the sixty stem-branch pairs and their Nayin field.
+              </p>
+              <details>
+                <summary>Open reference grid</summary>
+                <div id="sixtyGrid" class="sixty-grid"></div>
+              </details>
+            </section>
+
+            <section class="share-panel" aria-labelledby="shareTitle">
+              <div>
+                <h2 id="shareTitle">Share your archetype</h2>
+                <p id="shareTextPreview">My BaZi chart reveals I'm The Rebel - discover yours at Mystic East.</p>
+              </div>
+              <div class="share-buttons">
+                <a id="shareX" class="share-button" href="#" target="_blank" rel="noopener">X</a>
+                <a id="shareReddit" class="share-button" href="#" target="_blank" rel="noopener">Reddit</a>
+                <button id="copyShare" class="share-button" type="button">Copy Link</button>
+              </div>
+              <p id="copyShareStatus" class="copy-status" aria-live="polite"></p>
+            </section>
+
+            <div class="cta-band result-cta">
+              <div>
+                <h2 id="readingHookTitle">Want a full reading?</h2>
+                <p id="readingHookText">Go deeper with a written interpretation built around your chart.</p>
+              </div>
+              <a class="btn" href="readings.html">Explore Readings</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-shell">
+      <span>Mystic East · No data stored, no accounts required for the free chart.</span>
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="what-is-bazi.html">What is BaZi</a>
+        <a href="readings.html">Readings</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/bazi-engine.js"></script>
+</body>
+</html>
