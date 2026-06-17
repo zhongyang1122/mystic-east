@@ -1654,3 +1654,52 @@ summary {
     padding: 20px;
   }
 }
+
+.whisper-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.whisper-card {
+  padding: 22px;
+  border: 1px solid rgba(201, 169, 110, 0.28);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(201, 169, 110, 0.06), rgba(15, 10, 26, 0.4));
+}
+
+.whisper-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.whisper-icon {
+  font-size: 22px;
+}
+
+.whisper-head h3 {
+  margin-bottom: 0;
+  color: var(--gold-soft);
+  font-family: "Cinzel", serif;
+  font-size: 17px;
+}
+
+.whisper-card p {
+  color: rgba(245, 240, 232, 0.78);
+  font-size: 14px;
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+
+.whisper-cta {
+  display: inline-flex;
+  font-size: 13px;
+  padding: 8px 18px;
+  color: var(--bg-night) !important;
+  background: var(--gold) !important;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+}

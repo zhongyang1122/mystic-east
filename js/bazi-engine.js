@@ -617,6 +617,81 @@
     }
   }
 
+  function renderWhispers(chart) {
+    const container = document.getElementById("whispers");
+    if (!container) return;
+
+    const whispers = [];
+    const allGods = collectGods(chart);
+    const counts = elementCounts(chart.pillars);
+    const combos = detectCombos(allGods);
+    const dayPillar = chart.pillars[2];
+    const dayStemEn = chart.dayStemEnglish || "";
+
+    if ((allGods.includes("正官") || allGods.includes("七杀")) && (allGods.includes("伤官") || allGods.includes("食神"))) {
+      whispers.push({
+        icon: "⚔️",
+        title: "A power struggle in your chart",
+        body: "Your chart carries both authority archetypes (The Judge or The Warrior) AND creative rebels (The Rebel or The Artist). This tension shapes how you handle rules, authority, and self-expression. In your full Elemental Portrait, discover which one leads at each stage of your life — and how to stop the internal friction.",
+        cta: "See your archetypes in action →"
+      });
+    }
+
+    const maxEl = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    const minEl = Object.entries(counts).sort((a, b) => a[1] - b[1])[0];
+    if (maxEl[1] >= 4 || minEl[1] === 0) {
+      const strong = maxEl[0];
+      const weak = minEl[1] === 0 ? minEl[0] : null;
+      const elMap = { "木": "Wood", "火": "Fire", "土": "Earth", "金": "Metal", "水": "Water" };
+      whispers.push({
+        icon: "🔥",
+        title: `Your chart amplifies ${elMap[strong] || strong}`,
+        body: `${elMap[strong] || strong} appears ${maxEl[1]} times — that's an unusually strong signal.` + (weak ? ` Meanwhile, ${elMap[weak] || weak} is missing from your chart entirely.` : "") + ` This imbalance creates a specific rhythm of strengths and blind spots. Your Elemental Signature reading reveals how to balance what's loud and invite back what's quiet.`,
+        cta: "Balance your elements →"
+      });
+    }
+
+    const dayStage = dayPillar.lifeStage;
+    if (dayStage && !["帝旺", "临官"].includes(dayStage)) {
+      const stageEn = { "长生": "Birth", "沐浴": "Bath", "冠带": "Coming of Age", "临官": "Career", "帝旺": "Peak", "衰": "Decline", "病": "Sickness", "死": "Death", "墓": "Tomb", "绝": "Dissolution", "胎": "Conception", "养": "Gestation" };
+      whispers.push({
+        icon: "🌊",
+        title: "Your energy follows a different curve",
+        body: `Your Day Pillar sits in the ${stageEn[dayStage] || dayStage} stage. Most people burn brightest early. Your chart suggests a different arc — one where your most powerful years may come later, or where your gift is depth rather than speed. The Timing Map reveals when your waves rise and recede.`,
+        cta: "See your timing curve →"
+      });
+    }
+
+    if (combos.length > 0 && combos[0] !== "No major classic pattern stands out from these three starter combinations.") {
+      whispers.push({
+        icon: "✨",
+        title: "A rare pattern was found",
+        body: combos[0] + " This specific combination has been studied for centuries and signals a particular life path. Your free chart names it. A full reading explains how to activate it in your daily life.",
+        cta: "Activate your pattern →"
+      });
+    }
+
+    if (whispers.length < 2) {
+      whispers.push({
+        icon: "🔮",
+        title: `Your Day Master: ${dayStemEn}`,
+        body: `You were born with ${dayStemEn} as your core energy. Every Heavenly Stem carries a different rhythm, and yours has been mapped for over two thousand years. Discover what classical texts say about your specific Day Master and how it shapes your decisions, relationships, and timing.`,
+        cta: "Discover your core design →"
+      });
+    }
+
+    container.innerHTML = whispers.map(w => `
+      <article class="whisper-card">
+        <div class="whisper-head">
+          <span class="whisper-icon">${w.icon}</span>
+          <h3>${w.title}</h3>
+        </div>
+        <p>${w.body}</p>
+        <a class="btn whisper-cta" href="readings.html">${w.cta}</a>
+      </article>
+    `).join("");
+  }
+
   function renderChart(chart, source = {}) {
     const resultTitle = document.getElementById("resultTitle");
     const lunarLine = document.getElementById("lunarLine");
@@ -682,6 +757,7 @@
     comboTags.innerHTML = detectCombos(allGods).map(item => `<span class="tag">${item}</span>`).join("");
     updateResultCta(topGod);
     updateSharePanel(topGod);
+    renderWhispers(chart);
 
     const emptyState = document.getElementById("emptyState");
     const results = document.getElementById("results");
@@ -829,6 +905,7 @@
     detectCombos,
     buildChart,
     renderChart,
+    renderWhispers,
     formatStem,
     formatBranch,
     formatGod,
