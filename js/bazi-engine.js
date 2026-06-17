@@ -600,6 +600,23 @@
     }
   }
 
+  function saveChartForReading(chart, source = {}) {
+    const chartForReading = {
+      ...chart,
+      source: {
+        dateText: source.dateText || "",
+        hour: Number.isFinite(Number(source.hour)) ? Number(source.hour) : "",
+        name: source.name || ""
+      }
+    };
+
+    try {
+      localStorage.setItem("baziChart", JSON.stringify(chartForReading));
+    } catch (err) {
+      // Local storage can be unavailable in private or restricted browser modes.
+    }
+  }
+
   function renderChart(chart, source = {}) {
     const resultTitle = document.getElementById("resultTitle");
     const lunarLine = document.getElementById("lunarLine");
@@ -721,6 +738,7 @@
       try {
         const date = utcDate(year, month, day);
         const chart = buildChart(date, hour);
+        saveChartForReading(chart, { dateText, hour, name });
         renderChart(chart, { dateText, hour, name });
       } catch (err) {
         if (error) error.textContent = err.message;
@@ -823,6 +841,7 @@
     shareCopy,
     updateResultCta,
     updateSharePanel,
+    saveChartForReading,
     initHourOptions,
     initSixtyGrid,
     initForm,

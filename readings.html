@@ -3,23 +3,325 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Choose a written BaZi reading tier from Mystic East. Placeholder purchase flow only.">
+  <meta name="description" content="Choose a Mystic East BaZi reading and unlock your browser-generated report instantly after PayPal checkout.">
   <link rel="canonical" href="https://mystic-east.example/readings.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Mystic East">
   <meta property="og:title" content="BaZi Readings | Mystic East">
-  <meta property="og:description" content="Choose a written BaZi reading tier for your archetypes, element balance, career direction, and reflection prompts.">
+  <meta property="og:description" content="Unlock a written BaZi report instantly after PayPal checkout, based on your locally generated Mystic East chart.">
   <meta property="og:url" content="https://mystic-east.example/readings.html">
   <meta property="og:image" content="https://mystic-east.example/assets/og-mystic-east.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="BaZi Readings | Mystic East">
-  <meta name="twitter:description" content="Written BaZi reports from $9.99 to $39.99. Payment is placeholder-only in this demo.">
+  <meta name="twitter:description" content="Written BaZi reports from $9.99 to $39.99, revealed directly on the page after payment.">
   <meta name="twitter:image" content="https://mystic-east.example/assets/og-mystic-east.svg">
   <title>BaZi Readings | Mystic East</title>
   <!-- Plausible Analytics placeholder: replace data-domain before launch, then uncomment.
   <script defer data-domain="mystic-east.example" src="https://plausible.io/js/script.js"></script>
   -->
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAdJ0XjZChtBPSHhKwbPNfdqCMwDxjQ6cG1x2wQafl5WCCP5jAC4yZdBFjQ2JFKnZeswV8CTwA70u9P2A&currency=USD" data-namespace="paypal_sdk"></script>
+  <style>
+    .payment-note {
+      min-height: 20px;
+      margin: 10px 0 0;
+      color: rgba(26, 20, 16, 0.64);
+      font-size: 12px;
+    }
+
+    .paypal-button-slot {
+      min-height: 45px;
+      margin-top: auto;
+    }
+
+    .reading-content-section {
+      position: relative;
+      padding: 76px 0;
+      overflow: hidden;
+      border-top: 1px solid rgba(201, 169, 110, 0.18);
+      background:
+        linear-gradient(180deg, rgba(9, 6, 17, 0.94), rgba(15, 10, 26, 0.98)),
+        var(--bg-night);
+    }
+
+    .reading-content-section::before {
+      position: absolute;
+      inset: 0;
+      content: "";
+      pointer-events: none;
+      opacity: 0.42;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1px, transparent 1.6px),
+        radial-gradient(circle, rgba(201, 169, 110, 0.58) 0 1px, transparent 1.5px);
+      background-position: 18px 24px, 92px 68px;
+      background-size: 132px 132px, 210px 210px;
+    }
+
+    .reading-content-section .page-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    .reading-paper {
+      padding: clamp(24px, 4vw, 46px);
+      border: 1px solid rgba(96, 71, 43, 0.2);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(96, 71, 43, 0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(96, 71, 43, 0.028) 1px, transparent 1px),
+        linear-gradient(145deg, rgba(255, 251, 244, 0.98), rgba(232, 221, 206, 0.98)),
+        var(--paper);
+      background-size: 28px 28px, 28px 28px, auto, auto;
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.38);
+    }
+
+    .reading-paper h2,
+    .reading-paper h3 {
+      color: #7d5c1e;
+      font-family: "Cinzel", serif;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .reading-paper h2 {
+      margin-bottom: 14px;
+      font-size: clamp(30px, 4vw, 52px);
+    }
+
+    .reading-paper h3 {
+      margin: 28px 0 10px;
+      font-size: clamp(22px, 2.4vw, 30px);
+    }
+
+    .reading-paper p,
+    .reading-paper li {
+      color: rgba(26, 20, 16, 0.76);
+    }
+
+    .reading-paper .eyebrow {
+      color: #6e501b;
+      background: rgba(201, 169, 110, 0.14);
+    }
+
+    .reading-lede {
+      max-width: 860px;
+      margin-bottom: 28px;
+      font-size: 18px;
+    }
+
+    .reading-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .reading-actions .btn {
+      color: var(--paper);
+      background:
+        linear-gradient(var(--ink), var(--ink)) padding-box,
+        linear-gradient(135deg, var(--gold-soft), var(--gold), var(--ember)) border-box;
+    }
+
+    .reading-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 24px 0 32px;
+    }
+
+    .reading-meta > span {
+      display: block;
+      padding: 14px;
+      border: 1px solid rgba(96, 71, 43, 0.16);
+      border-radius: var(--radius);
+      background: rgba(201, 169, 110, 0.12);
+      color: rgba(26, 20, 16, 0.72);
+      font-size: 13px;
+    }
+
+    .reading-meta strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    .reading-section {
+      padding: 28px 0;
+      border-top: 1px solid rgba(96, 71, 43, 0.16);
+    }
+
+    .reading-section:first-of-type {
+      border-top: 0;
+    }
+
+    .reading-table {
+      margin: 18px 0;
+      overflow-x: auto;
+      border: 1px solid rgba(96, 71, 43, 0.16);
+      border-radius: var(--radius);
+      background: rgba(255, 251, 244, 0.74);
+    }
+
+    .reading-table table {
+      min-width: 760px;
+    }
+
+    .reading-table .hanzi {
+      display: block;
+      color: var(--ink);
+      font-family: "Noto Serif SC", serif;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .reading-table small {
+      display: block;
+      color: rgba(26, 20, 16, 0.62);
+      font-size: 12px;
+    }
+
+    .reading-list {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .reading-list li {
+      padding: 0 0 12px;
+      border-bottom: 1px solid rgba(96, 71, 43, 0.12);
+    }
+
+    .reading-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .element-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .element-meter {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr) 38px;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink);
+    }
+
+    .element-meter span:first-child,
+    .element-meter b {
+      color: rgba(26, 20, 16, 0.74);
+      font-size: 14px;
+    }
+
+    .element-meter .bar {
+      background: rgba(96, 71, 43, 0.1);
+    }
+
+    .reading-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .reading-tags .tag {
+      color: #604514;
+      background: rgba(201, 169, 110, 0.16);
+      border-color: rgba(96, 71, 43, 0.18);
+    }
+
+    .chart-required {
+      padding: clamp(24px, 4vw, 40px);
+      border: 1px solid rgba(201, 169, 110, 0.26);
+      border-radius: var(--radius);
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 0 26px 90px rgba(0, 0, 0, 0.34);
+    }
+
+    .chart-required h2 {
+      color: var(--ink);
+      font-family: "Cinzel", serif;
+    }
+
+    .chart-required p {
+      color: rgba(26, 20, 16, 0.74);
+    }
+
+    .chart-required a {
+      color: #7d5c1e;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .fulfillment-note {
+      margin: 28px 0 0;
+      padding: 16px;
+      border: 1px solid rgba(96, 71, 43, 0.16);
+      border-radius: var(--radius);
+      background: rgba(122, 160, 131, 0.12);
+      color: rgba(26, 20, 16, 0.78);
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .reading-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .element-meter {
+        grid-template-columns: 68px minmax(0, 1fr) 32px;
+      }
+    }
+
+    @media print {
+      body {
+        color: #111;
+        background: #fff !important;
+      }
+
+      body::before,
+      body::after,
+      .site-header,
+      .site-footer,
+      .hero,
+      #reading-offers,
+      .faq-section,
+      .reading-actions {
+        display: none !important;
+      }
+
+      .section,
+      .reading-content-section {
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      .page-shell {
+        width: 100% !important;
+      }
+
+      .reading-paper {
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+        background: #fff !important;
+      }
+
+      .reading-paper p,
+      .reading-paper li {
+        color: #222;
+      }
+    }
+  </style>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -38,7 +340,7 @@
           "name": "How long does a reading take?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The placeholder delivery promise is within 24 hours after the purchase flow is connected."
+            "text": "The browser-generated reading appears on this page immediately after PayPal checkout. A follow-up copy is expected by PayPal email within 24 hours."
           }
         },
         {
@@ -46,7 +348,7 @@
           "name": "Can I get a refund?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Refund terms should be finalized before taking real payments. This static demo does not collect payment."
+            "text": "Refund terms should be finalized before taking real payments. For a fair policy, offer refunds before the written reading is started."
           }
         }
       ]
@@ -77,90 +379,78 @@
         <span class="eyebrow">Written BaZi interpretations</span>
         <h1 class="page-title">Choose Your Reading</h1>
         <p class="page-intro">
-          Turn your chart into a thoughtful, human-readable report. This demo does not process
-          real payments; the buttons open a contact placeholder.
+          Pay with PayPal, then unlock a chart-based BaZi reading directly on this page.
+          The report is generated locally from the chart you created in the free calculator.
         </p>
       </div>
     </section>
 
     <section class="section">
       <div class="page-shell">
-        <div class="pricing-grid">
-          <article class="price-card">
-            <h2>Essential</h2>
-            <div class="price">$9.99</div>
-            <p>A concise reading for first-time explorers who want the core pattern.</p>
-            <ul>
-              <li>Four Pillars overview</li>
-              <li>Day Master explanation</li>
-              <li>Top Ten Archetypes summary</li>
-              <li>Five Elements balance snapshot</li>
-              <li>One-page written report</li>
-            </ul>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-              <input type="hidden" name="cmd" value="_xclick">
-              <input type="hidden" name="business" value="1131718642@qq.com">
-              <input type="hidden" name="item_name" value="Essential BaZi Reading">
-              <input type="hidden" name="amount" value="9.99">
-              <input type="hidden" name="currency_code" value="USD">
-              <input type="hidden" name="no_shipping" value="1">
-              <button type="submit" class="btn">Pay $9.99 with PayPal</button>
-            </form>
-          </article>
+        <div id="reading-offers">
+          <div class="pricing-grid" aria-label="BaZi reading tiers">
+            <article class="price-card">
+              <h2>Essential</h2>
+              <div class="price">$9.99</div>
+              <p>A concise reading for first-time explorers who want the core pattern.</p>
+              <ul>
+                <li>Four Pillars overview</li>
+                <li>Day Master explanation</li>
+                <li>Top Ten Archetypes summary</li>
+                <li>Five Elements balance snapshot</li>
+                <li>One-page instant reading</li>
+              </ul>
+              <div id="paypal-button-essential" class="paypal-button-slot" data-reading-tier="essential"></div>
+              <p id="paypal-status-essential" class="payment-note" aria-live="polite"></p>
+            </article>
 
-          <article class="price-card featured">
-            <span class="badge">Recommended</span>
-            <h2>Deep</h2>
-            <div class="price">$19.99</div>
-            <p>A fuller reading for personality, career direction, and relationship dynamics.</p>
-            <ul>
-              <li>Everything in Essential</li>
-              <li>Detailed Ten Archetypes interpretation</li>
-              <li>Career and creative direction</li>
-              <li>Classic combinations explained</li>
-              <li>Three-page written report</li>
-            </ul>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-              <input type="hidden" name="cmd" value="_xclick">
-              <input type="hidden" name="business" value="1131718642@qq.com">
-              <input type="hidden" name="item_name" value="Deep BaZi Reading">
-              <input type="hidden" name="amount" value="19.99">
-              <input type="hidden" name="currency_code" value="USD">
-              <input type="hidden" name="no_shipping" value="1">
-              <button type="submit" class="btn">Pay $19.99 with PayPal</button>
-            </form>
-          </article>
+            <article class="price-card featured">
+              <span class="badge">Recommended</span>
+              <h2>Deep</h2>
+              <div class="price">$19.99</div>
+              <p>A fuller reading for personality, career direction, and relationship dynamics.</p>
+              <ul>
+                <li>Everything in Essential</li>
+                <li>Detailed Ten Archetypes interpretation</li>
+                <li>Five Elements depth notes</li>
+                <li>Classic combinations explained</li>
+                <li>Three-year symbolic prompts</li>
+              </ul>
+              <div id="paypal-button-deep" class="paypal-button-slot" data-reading-tier="deep"></div>
+              <p id="paypal-status-deep" class="payment-note" aria-live="polite"></p>
+            </article>
 
-          <article class="price-card">
-            <h2>Master</h2>
-            <div class="price">$39.99</div>
-            <p>A premium report for people who want a layered symbolic map and practical prompts.</p>
-            <ul>
-              <li>Everything in Deep</li>
-              <li>Element strategy and imbalance notes</li>
-              <li>Relationship and collaboration patterns</li>
-              <li>Life-stage themes across all pillars</li>
-              <li>Seven-page written report</li>
-            </ul>
-            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-              <input type="hidden" name="cmd" value="_xclick">
-              <input type="hidden" name="business" value="1131718642@qq.com">
-              <input type="hidden" name="item_name" value="Master BaZi Reading">
-              <input type="hidden" name="amount" value="39.99">
-              <input type="hidden" name="currency_code" value="USD">
-              <input type="hidden" name="no_shipping" value="1">
-              <button type="submit" class="btn">Pay $39.99 with PayPal</button>
-            </form>
-          </article>
-        </div>
-
-        <div class="cta-band">
-          <div>
-            <h2>Need your chart first?</h2>
-            <p>Use the free browser calculator before choosing a reading tier.</p>
+            <article class="price-card">
+              <h2>Master</h2>
+              <div class="price">$39.99</div>
+              <p>A premium report for people who want a layered symbolic map and practical prompts.</p>
+              <ul>
+                <li>Everything in Deep</li>
+                <li>Starter structure and useful-element direction</li>
+                <li>Relationship and collaboration patterns</li>
+                <li>Career and naming element prompts</li>
+                <li>Nayin depth reading</li>
+              </ul>
+              <div id="paypal-button-master" class="paypal-button-slot" data-reading-tier="master"></div>
+              <p id="paypal-status-master" class="payment-note" aria-live="polite"></p>
+            </article>
           </div>
-          <a class="btn" href="calculator.html">Open Your BaZi</a>
+
+          <div class="cta-band">
+            <div>
+              <h2>Need your chart first?</h2>
+              <p>Use the free browser calculator before choosing a reading tier.</p>
+            </div>
+            <a class="btn" href="calculator.html">Open Your BaZi</a>
+          </div>
         </div>
+
+        <!-- Payment gating is client-side only: PayPal onApprove reveals a local reading; this static site has no server-side payment verification. -->
+        <section id="reading-content" class="reading-content-section" aria-live="polite" hidden>
+          <div class="page-shell">
+            <div id="reading-content-body"></div>
+          </div>
+        </section>
 
         <section class="faq-section" aria-labelledby="faqTitle">
           <div class="section-header">
@@ -185,8 +475,8 @@
             <article class="faq-item">
               <h3>How long does a reading take?</h3>
               <p>
-                Once real checkout is connected, the intended delivery window is within 24 hours by email.
-                This demo does not collect payment.
+                Your reading appears on this page after PayPal approval. A follow-up copy is expected
+                through your PayPal email within 24 hours.
               </p>
             </article>
             <article class="faq-item">
@@ -202,17 +492,6 @@
     </section>
   </main>
 
-  <div id="readingModal" class="modal-overlay" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="readingModalTitle">
-      <button id="readingModalClose" class="modal-close" type="button" aria-label="Close">×</button>
-      <h2 id="readingModalTitle">Payment via PayPal</h2>
-      <p>
-        PayPal handles your payment securely. After purchase, your written BaZi reading
-        will be delivered to your PayPal email within 24 hours.
-      </p>
-    </div>
-  </div>
-
   <footer class="site-footer">
     <div class="footer-shell">
       <span>Mystic East · No data stored, no accounts required for the free chart.</span>
@@ -226,5 +505,6 @@
   </footer>
 
   <script src="js/bazi-engine.js"></script>
+  <script src="js/reading-engine.js"></script>
 </body>
 </html>
