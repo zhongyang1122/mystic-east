@@ -1141,6 +1141,55 @@ summary {
   font-weight: 700;
 }
 
+/* --- Social Proof Strip (Homepage) --- */
+.social-proof-strip {
+  padding: 48px 0;
+  border-top: 1px solid rgba(201, 169, 110, 0.16);
+  border-bottom: 1px solid rgba(201, 169, 110, 0.16);
+  background: rgba(201, 169, 110, 0.04);
+}
+
+.proof-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 48px;
+}
+
+.proof-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.proof-number {
+  font-family: "Cinzel", serif;
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+.proof-label {
+  color: var(--gold-soft);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 768px) {
+  .proof-row {
+    gap: 28px;
+  }
+
+  .proof-stat {
+    flex: 0 0 auto;
+    min-width: 140px;
+  }
+}
+
 .sample-scroll {
   position: relative;
   overflow: hidden;
