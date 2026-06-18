@@ -531,7 +531,7 @@
 
   function calculatorUrl() {
     if (window.location.protocol === "file:") {
-      return "https://mystic-east.example/calculator.html";
+      return "https://yourbazi.xyz/calculator.html";
     }
 
     const url = new URL(window.location.href);
