@@ -182,7 +182,7 @@
         <span class="eyebrow">${escapeHtml(TIERS[tier].label)} instant reading</span>
         <h2>${name} BaZi Reading</h2>
         <p class="reading-lede">
-          Payment approved by PayPal. This ${escapeHtml(TIERS[tier].label)} report is generated in your browser from the chart saved by the free calculator.
+          Your ${escapeHtml(TIERS[tier].label)} report is ready. It is generated in your browser from the chart saved by the free calculator.
           The interpretation uses the Four Pillars, Ten Archetypes, Five Elements, Twelve Life Stages, classic combinations, and Nayin labels exposed by the Mystic East BaZi engine.
         </p>
         <div class="reading-actions">
@@ -195,14 +195,14 @@
           <span><strong>Lunar date</strong>${escapeHtml(lunar.year || "")}, month ${escapeHtml(lunar.month || "")}, day ${escapeHtml(lunar.day || "")}</span>
           <span><strong>Day Master</strong><span lang="zh-Hans">${escapeHtml(chart.dayStem)}</span> ${escapeHtml(chart.dayStemEnglish)}</span>
           <span><strong>Day element</strong>${escapeHtml(dayElementEnglish)} (<span lang="zh-Hans">${escapeHtml(dayElement)}</span>)</span>
-          <span><strong>Method</strong>Local chart data, no server-side report generation</span>
+          <span><strong>Method</strong>Local chart data translated into a browser-generated report</span>
         </div>
     `;
   }
 
   function buildOutro() {
     return `
-        <p class="fulfillment-note">Your reading will also be sent to your PayPal email within 24 hours.</p>
+        <p class="fulfillment-note">Use the Save as PDF button above to keep a copy of this reading.</p>
       </article>
     `;
   }
