@@ -652,7 +652,7 @@
     if (!target) return;
 
     if (!paypal || typeof paypal.Buttons !== "function") {
-      setStatus(tier, "PayPal could not load. Refresh this page or check your browser blockers.");
+      setStatus(tier, "PayPal checkout is temporarily unavailable. Please try again later.");
       return;
     }
 
