@@ -48,6 +48,8 @@ Observed result:
 - `window.paypal_sdk` is not loaded.
 - The Essential, Deep, and Master button containers remain empty.
 - The page shows `PayPal could not load. Refresh this page or check your browser blockers.`
+- PayPal's response body says:
+  - `SDK Validation error: 'client-id not recognized for either production or sandbox'`
 
 Impact:
 
