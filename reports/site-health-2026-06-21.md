@@ -4,7 +4,7 @@ Date: 2026-06-21
 
 ## Summary
 
-The site is partially operational, but not ready for reliable monetization.
+The site is operational for HTTPS browsing, SEO discovery, free calculator usage, and PayPal button rendering. A controlled live payment test is still recommended before relying on paid traffic.
 
 ## What Works
 
@@ -19,23 +19,23 @@ The site is partially operational, but not ready for reliable monetization.
   - Master: about 2001 words
 - The generated paid report includes a Save as PDF action and no longer promises email delivery.
 
-## Blocking Problems
+## Health Status
 
-### 1. HTTPS is not healthy
+### 1. HTTPS is healthy
 
-`https://yourbazi.xyz` fails normal TLS validation because the certificate presented by GitHub Pages does not cover `yourbazi.xyz`.
+`https://yourbazi.xyz` now passes normal TLS validation.
+
+Observed result:
+
+- `https://yourbazi.xyz/` returns HTTP `200`.
+- `http://yourbazi.xyz/` redirects to `https://yourbazi.xyz/` with HTTP `301`.
+- TLS certificate subject is `CN=yourbazi.xyz`.
+- Certificate SAN includes `DNS:yourbazi.xyz` and `DNS:www.yourbazi.xyz`.
 
 Impact:
 
-- Browsers may show a security warning.
-- Google indexing and canonical handling can be impaired.
-- Payment trust is materially worse.
-
-Required external action:
-
-- Open GitHub repository `Settings -> Pages`.
-- Confirm the custom domain is exactly `yourbazi.xyz`.
-- If it already is, remove it, save, add `yourbazi.xyz` again, wait for certificate provisioning, then enable `Enforce HTTPS`.
+- Search engines and users can use the canonical HTTPS URL.
+- PayPal checkout page can load under HTTPS.
 
 ### 2. PayPal checkout is operational at the SDK/button-rendering layer
 
@@ -73,4 +73,4 @@ Remaining caution:
 - Free calculator: working over HTTP.
 - Paid report generation: working after simulated approval.
 - Real payment collection: PayPal buttons render; full live transaction still needs controlled purchase verification.
-- Production trust/SEO: blocked by HTTPS certificate.
+- Production trust/SEO: HTTPS, robots.txt, and sitemap.xml are healthy.
