@@ -352,6 +352,13 @@ select:focus-visible {
     linear-gradient(135deg, rgba(201, 169, 110, 0.56), rgba(245, 240, 232, 0.22)) border-box;
 }
 
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
 .section {
   padding: 76px 0;
 }
