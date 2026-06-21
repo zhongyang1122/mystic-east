@@ -37,30 +37,28 @@ Required external action:
 - Confirm the custom domain is exactly `yourbazi.xyz`.
 - If it already is, remove it, save, add `yourbazi.xyz` again, wait for certificate provisioning, then enable `Enforce HTTPS`.
 
-### 2. PayPal checkout is not operational
+### 2. PayPal checkout is operational at the SDK/button-rendering layer
 
-The PayPal JavaScript SDK request currently returns HTTP `400`:
+The previous PayPal client ID returned HTTP `400`. It has been replaced with a valid client ID.
 
-`https://www.paypal.com/sdk/js?client-id=BAAdJ0XjZChtBPSHhKwbPNfdqCMwDxjQ6cG1x2wQafl5WCCP5jAC4yZdBFjQ2JFKnZeswV8CTwA70u9P2A&currency=USD`
+Current SDK check:
 
 Observed result:
 
-- `window.paypal_sdk` is not loaded.
-- The Essential, Deep, and Master button containers remain empty.
-- The page shows `PayPal could not load. Refresh this page or check your browser blockers.`
-- PayPal's response body says:
-  - `SDK Validation error: 'client-id not recognized for either production or sandbox'`
+- PayPal SDK returns HTTP `200`.
+- `window.paypal_sdk` loads in browser automation.
+- Essential, Deep, and Master PayPal button containers render iframe/button content.
+- No payment-note error text is shown during the local render test.
 
 Impact:
 
-- Users cannot pay through the current PayPal buttons.
-- The paid report content exists, but the checkout gate cannot be reached.
+- Users can reach rendered PayPal buttons.
+- Full live payment settlement still needs a real transaction test from the PayPal dashboard or a controlled purchase.
 
-Required external action:
+Remaining caution:
 
-- Create or copy a valid PayPal Live REST App Client ID from the PayPal Developer Dashboard.
-- Replace the current `client-id` in `readings.html`.
-- Re-test that the PayPal SDK returns HTTP `200` and the buttons render.
+- The unlock flow is still client-side and should get server-side order verification before paid traffic is scaled.
+- There is still no durable order history or report recovery.
 
 ## SEO Automation Status
 
@@ -74,5 +72,5 @@ Required external action:
 - Content publishing: working.
 - Free calculator: working over HTTP.
 - Paid report generation: working after simulated approval.
-- Real payment collection: blocked by PayPal SDK/client ID.
+- Real payment collection: PayPal buttons render; full live transaction still needs controlled purchase verification.
 - Production trust/SEO: blocked by HTTPS certificate.
