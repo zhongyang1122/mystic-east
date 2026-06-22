@@ -19,6 +19,8 @@
     }
   };
 
+  const LAST_READING_KEY = "mysticEastLastReading";
+
   const ORDERED_GODS = ["正官", "七杀", "正印", "偏印", "正财", "偏财", "食神", "伤官", "比肩", "劫财"];
 
   const GOD_FAMILIES = [
@@ -78,6 +80,89 @@
     } catch (err) {
       return null;
     }
+  }
+
+  function safeFilePart(value, fallback) {
+    return String(value || fallback)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || fallback;
+  }
+
+  function readingFilename(data) {
+    const tier = safeFilePart(data?.tier, "reading");
+    const name = safeFilePart(data?.source?.name, "chart");
+    const stamp = safeFilePart((data?.generatedAt || "").slice(0, 10), "backup");
+    return `mystic-east-${tier}-${name}-${stamp}.html`;
+  }
+
+  function saveReadingBackup(payload) {
+    try {
+      localStorage.setItem(LAST_READING_KEY, JSON.stringify(payload));
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function loadReadingBackup() {
+    try {
+      const raw = localStorage.getItem(LAST_READING_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !parsed.html || !parsed.tier) return null;
+      return parsed;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function clearReadingBackup() {
+    try {
+      localStorage.removeItem(LAST_READING_KEY);
+    } catch (err) {
+      // Ignore local storage failures; clearing is best effort only.
+    }
+  }
+
+  function backupMetaText(data) {
+    if (!data) return "";
+
+    const source = data.source || {};
+    const tier = TIERS[data.tier]?.label || data.tier;
+    const pieces = [
+      `${tier} reading`,
+      source.name ? `for ${source.name}` : null,
+      source.dateText ? `chart date ${source.dateText}` : null,
+      data.generatedAt ? `saved ${new Date(data.generatedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}` : null
+    ].filter(Boolean);
+
+    return pieces.join(" · ");
+  }
+
+  function downloadBackup(data) {
+    if (!data || !data.html) return;
+
+    const documentHtml = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mystic East ${escapeHtml(TIERS[data.tier]?.label || "Reading")} Backup</title>
+</head>
+<body>
+${data.html}
+</body>
+</html>`;
+    const blob = new Blob([documentHtml], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = readingFilename(data);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
   function section(title, body) {
@@ -615,27 +700,42 @@
     `;
   }
 
-  function revealReading(tier) {
+  function showReadingHtml(html, options = {}) {
+    const { hideOffers = true } = options;
     const offers = document.getElementById("reading-offers");
     const content = document.getElementById("reading-content");
     const body = document.getElementById("reading-content-body");
-    const bazi = engine();
 
-    if (offers) offers.hidden = true;
+    if (offers && hideOffers) offers.hidden = true;
     if (content) content.hidden = false;
 
     if (!body) return;
-    const chart = loadStoredChart();
-
-    if (!bazi || !chart) {
-      body.innerHTML = missingChartHtml();
-    } else {
-      body.innerHTML = buildReading(tier, chart);
-    }
+    body.innerHTML = html;
 
     if (content) {
       content.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  }
+
+  function revealReading(tier) {
+    const bazi = engine();
+    const chart = loadStoredChart();
+    let html = "";
+
+    if (!bazi || !chart) {
+      html = missingChartHtml();
+    } else {
+      html = buildReading(tier, chart);
+      saveReadingBackup({
+        tier,
+        source: sourceMeta(chart),
+        generatedAt: new Date().toISOString(),
+        html
+      });
+      syncRecoveryPanel();
+    }
+
+    showReadingHtml(html);
   }
 
   function setStatus(tier, message) {
@@ -696,6 +796,32 @@
     Object.keys(TIERS).forEach(renderPayPalButton);
   }
 
+  function syncRecoveryPanel() {
+    const panel = document.getElementById("reading-recovery");
+    const meta = document.getElementById("reading-recovery-meta");
+    const open = document.getElementById("reading-recovery-open");
+    const download = document.getElementById("reading-recovery-download");
+    const clear = document.getElementById("reading-recovery-clear");
+    const backup = loadReadingBackup();
+
+    if (!panel || !meta || !open || !download || !clear) return;
+
+    if (!backup) {
+      panel.hidden = true;
+      meta.textContent = "";
+      return;
+    }
+
+    panel.hidden = false;
+    meta.textContent = backupMetaText(backup);
+    open.onclick = () => showReadingHtml(backup.html, { hideOffers: false });
+    download.onclick = () => downloadBackup(backup);
+    clear.onclick = () => {
+      clearReadingBackup();
+      syncRecoveryPanel();
+    };
+  }
+
   function initPrintButton() {
     document.addEventListener("click", event => {
       const button = event.target.closest("[data-print-reading]");
@@ -707,6 +833,7 @@
   function init() {
     initPayPalButtons();
     initPrintButton();
+    syncRecoveryPanel();
   }
 
   window.MysticReadingEngine = {
